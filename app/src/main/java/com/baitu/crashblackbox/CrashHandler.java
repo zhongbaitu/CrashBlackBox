@@ -1,9 +1,7 @@
 package com.baitu.crashblackbox;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Looper;
-import android.support.v7.app.AlertDialog;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,58 +45,53 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        handleException(ex);
+        String stackTrace = getExceptionStackTrace(ex);
+        showCrashDialog(stackTrace);
     }
 
-    private boolean handleException(final Throwable ex) {
-        if (ex == null) {
-            return false;
-        }
-
+    private void showCrashDialog(final String stackTrace){
         new Thread() {
 
             @Override
             public void run() {
                 Looper.prepare();
 
-                ex.printStackTrace();
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("[" + ex.getMessage() + "]");
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("crash:");
-                stringBuilder.append("--------------");
-                StackTraceElement[] stackTrace = ex.getStackTrace();
-                for(int i = 0; i < stackTrace.length; i++){
-                    stringBuilder.append("\n");
-                    stringBuilder.append(stackTrace[i].getFileName());
-                    stringBuilder.append("\n");
-                    stringBuilder.append(stackTrace[i].getClassName());
-                    stringBuilder.append("\n");
-                    stringBuilder.append(stackTrace[i].getMethodName());
-                    stringBuilder.append("\n");
-                    stringBuilder.append(stackTrace[i].getLineNumber());
-                }
-
-                builder.setMessage(stringBuilder.toString());
-                builder.setNegativeButton("截图", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.setPositiveButton("退出", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                        System.exit(1);
-                    }
-                });
-                builder.show();
+                CrashDialogController crashDialogController = new CrashDialogController(context);
+                crashDialogController.setStackTrace(stackTrace);
+                crashDialogController.showDialog();
 
                 Looper.loop();
             }
 
         }.start();
 
-        return true;                                                                                                                }
+    }
+
+    private String getExceptionStackTrace(final Throwable ex) {
+        if (ex == null) {
+            return "";
+        }
+        ex.printStackTrace();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("[" + ex.getMessage() + "]");
+
+        stringBuilder.append("\n");
+        StackTraceElement[] stackTrace = ex.getStackTrace();
+        for (int i = 0; i < stackTrace.length; i++) {
+            stringBuilder.append("\n");
+            stringBuilder.append("at ");
+            stringBuilder.append(stackTrace[i].getClassName());
+            stringBuilder.append(".");
+            stringBuilder.append(stackTrace[i].getMethodName());
+            stringBuilder.append("(");
+            stringBuilder.append(stackTrace[i].getFileName());
+            stringBuilder.append(":");
+            stringBuilder.append(stackTrace[i].getLineNumber());
+            stringBuilder.append(")");
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
 }
