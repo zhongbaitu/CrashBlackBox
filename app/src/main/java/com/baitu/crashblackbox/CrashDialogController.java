@@ -14,6 +14,7 @@ import android.widget.Toast;
 /**
  * Created by baitu on 16/8/16.
  */
+
 public class CrashDialogController implements View.OnClickListener{
 
     private Context mContext;

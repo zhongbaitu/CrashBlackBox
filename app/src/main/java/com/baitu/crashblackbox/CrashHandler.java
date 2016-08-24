@@ -11,11 +11,12 @@ import java.util.Locale;
  * Created by baitu on 16/8/14.
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
+
     private static final String TAG = CrashHandler.class.getSimpleName();
 
-    private static CrashHandler instance; // 单例模式
+    private static CrashHandler mInstance; // 单例模式
 
-    private Context context; // 程序Context对象
+    private Context mContext; // 程序mContext对象
     private DateFormat formatter = new SimpleDateFormat(
             "yyyy-MM-dd_HH-mm-ss.SSS", Locale.CHINA);
 
@@ -24,19 +25,19 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public static CrashHandler getInstance() {
-        if (instance == null) {
+        if (mInstance == null) {
             synchronized (CrashHandler.class) {
-                if (instance == null) {
-                    instance = new CrashHandler();
+                if (mInstance == null) {
+                    mInstance = new CrashHandler();
                 }
             }
         }
 
-        return instance;
+        return mInstance;
     }
 
-    public void init(Context context) {
-        this.context = context;
+    public void init(Context mContext) {
+        this.mContext = mContext;
         // 获取系统默认的UncaughtException处理器
         Thread.getDefaultUncaughtExceptionHandler();
         // 设置该CrashHandler为程序的默认处理器
@@ -46,6 +47,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         String stackTrace = getExceptionStackTrace(ex);
+        FileManager.saveCrashTraceAsync(stackTrace);
         showCrashDialog(stackTrace);
     }
 
@@ -56,7 +58,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             public void run() {
                 Looper.prepare();
 
-                CrashDialogController crashDialogController = new CrashDialogController(context);
+                CrashDialogController crashDialogController = new CrashDialogController(mContext);
                 crashDialogController.setStackTrace(stackTrace);
                 crashDialogController.showDialog();
 
