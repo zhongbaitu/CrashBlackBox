@@ -13,9 +13,8 @@ import java.util.ArrayList;
  */
 public class FileManager {
 
-    public static void saveCrashTraceSync(String crashTrace){
+    public static void saveCrashTraceSync(CrashTraceInfo crashTraceInfo){
         JSONArray jsonArray = new JSONArray();
-        CrashTraceInfo crashTraceInfo = new CrashTraceInfo(crashTrace);
         ArrayList<CrashTraceInfo> traceInfoList = getCrashTraceInfoSync();
         traceInfoList.add(crashTraceInfo);
         for(int i = 0; i < traceInfoList.size(); i++){
@@ -25,11 +24,11 @@ public class FileManager {
         Utils.saveJsonToFile(jsonArray.toString(), Constant.FILE_CRASH_INFO);
     }
 
-    public static void saveCrashTraceAsync(final String crashTrace){
+    public static void saveCrashTraceAsync(final CrashTraceInfo crashTraceInfo){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                saveCrashTraceSync(crashTrace);
+                saveCrashTraceSync(crashTraceInfo);
             }
         }).start();
     }

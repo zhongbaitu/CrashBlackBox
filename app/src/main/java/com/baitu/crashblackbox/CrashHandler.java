@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -17,8 +18,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static CrashHandler mInstance; // 单例模式
 
     private Context mContext; // 程序mContext对象
-    private DateFormat formatter = new SimpleDateFormat(
-            "yyyy-MM-dd_HH-mm-ss.SSS", Locale.CHINA);
 
     private CrashHandler() {
 
@@ -47,11 +46,23 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         String stackTrace = getExceptionStackTrace(ex);
-        FileManager.saveCrashTraceAsync(stackTrace);
-        showCrashDialog(stackTrace);
+
+        CrashTraceInfo crashTraceInfo = new CrashTraceInfo();
+        crashTraceInfo.setCrashInfo(stackTrace);
+        DateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.CHINA);
+        String time = mDateFormat.format(new Date());
+        crashTraceInfo.setTime(time);
+        crashTraceInfo.setNetwork(Utils.getNetworkType(mContext));
+        crashTraceInfo.setSDCardCanWrite(Utils.checkSdWritable());
+        double size = Utils.getSdcardAvaiableSize() / 1024 / 1024;
+        crashTraceInfo.setSDCardSize(Double.toString(size));
+
+        FileManager.saveCrashTraceAsync(crashTraceInfo);
+
+        showCrashDialog(crashTraceInfo);
     }
 
-    private void showCrashDialog(final String stackTrace){
+    private void showCrashDialog(final CrashTraceInfo crashTraceInfo){
         new Thread() {
 
             @Override
@@ -59,7 +70,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 Looper.prepare();
 
                 CrashDialogController crashDialogController = new CrashDialogController(mContext);
-                crashDialogController.setStackTrace(stackTrace);
+                crashDialogController.setCrashTraceInfo(crashTraceInfo);
                 crashDialogController.showDialog();
 
                 Looper.loop();

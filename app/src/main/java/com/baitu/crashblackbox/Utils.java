@@ -1,7 +1,11 @@
 package com.baitu.crashblackbox;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
+import android.os.StatFs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -85,5 +89,83 @@ public class Utils {
         } catch (Exception e) {
         }
         return result;
+    }
+
+    /**
+     * 检查网络状态
+     */
+    public static String getNetworkType(Context context) {
+        if (isNetworkAvailable(context)) {
+            if (isWifiConnected(context)) {
+                return "wifi网络";
+            }
+        } else {
+            return "网络不可用";
+        }
+        return "移动网络";
+    }
+
+    /**
+     * 是否连接WIFI
+     */
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiNetworkInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 检查当前网络是否可用
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        } else {
+            NetworkInfo[] networkInfo = connectivityManager.getAllNetworkInfo();
+            if (networkInfo != null && networkInfo.length > 0) {
+                for (int i = 0; i < networkInfo.length; i++) {
+                    if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * sd卡是否可写
+     */
+    public static boolean checkSdWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) == false) {
+            return false;
+        }
+        File file = Environment.getExternalStorageDirectory();
+        if (file != null) {
+            if (file.canWrite()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static long getSdcardAvaiableSize() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File filePath = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(filePath.getPath());
+            long blockSize = stat.getBlockSize();
+            long availableBlocks = stat.getAvailableBlocks();
+            return availableBlocks * blockSize;
+        } else {
+            return 0;
+        }
     }
 }

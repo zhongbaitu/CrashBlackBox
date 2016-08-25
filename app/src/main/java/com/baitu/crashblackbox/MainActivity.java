@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CrashHandler.getInstance().init(this);
+        CrashBlackBox.getInstance().init(this);
 
         mCrashButton = (Button) findViewById(R.id.test);
         mCrashButton.setOnClickListener(new View.OnClickListener() {
@@ -26,4 +26,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        CrashBlackBox.getInstance().onDestory();
+        super.onDestroy();
+    }
 }

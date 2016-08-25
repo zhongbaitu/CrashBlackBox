@@ -39,8 +39,23 @@ public class CrashDialogController implements View.OnClickListener{
         mExitBtn.setOnClickListener(this);
     }
 
-    public void setStackTrace(String msg){
-        mCrashStackTraceTv.setText(msg);
+    public void setCrashTraceInfo(CrashTraceInfo info){
+        StringBuilder builder = new StringBuilder();
+        builder.append("时间：");
+        builder.append(info.getTime());
+        builder.append("     ");
+        builder.append("网络：");
+        builder.append(info.getNetwork());
+        builder.append("\n");
+        builder.append("SD卡是否可写：");
+        builder.append(info.isSDCardCanWrite());
+        builder.append("     ");
+        builder.append("SD卡剩余容量：");
+        builder.append(info.getSDCardSize()+"MB");
+        builder.append("\n");
+        builder.append("\n");
+        builder.append(info.getCrashInfo());
+        mCrashStackTraceTv.setText(builder.toString());
     }
 
     public void showDialog(){
