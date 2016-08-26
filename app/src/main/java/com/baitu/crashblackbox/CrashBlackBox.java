@@ -53,9 +53,16 @@ public class CrashBlackBox implements SensorEventListener{
                     case 0:
                         CrashInfoListActivity.start(mContext);
                         break;
+                    case 1:
+                        start();
+                         break;
                 }
             }
         }).show();
+    }
+
+    private void start(){
+//        MediaProjectionManager projectionManager = (MediaProjectionManager) mContext.getSystemService(MEDIA_PROJECTION_SERVICE);
     }
 
     @Override

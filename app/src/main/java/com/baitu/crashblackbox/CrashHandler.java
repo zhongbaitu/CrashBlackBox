@@ -49,7 +49,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         CrashTraceInfo crashTraceInfo = new CrashTraceInfo();
         crashTraceInfo.setCrashInfo(stackTrace);
-        DateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.CHINA);
+        DateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss", Locale.CHINA);
         String time = mDateFormat.format(new Date());
         crashTraceInfo.setTime(time);
         crashTraceInfo.setNetwork(Utils.getNetworkType(mContext));
@@ -88,7 +88,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[" + ex.getMessage() + "]");
-
         stringBuilder.append("\n");
         StackTraceElement[] stackTrace = ex.getStackTrace();
         for (int i = 0; i < stackTrace.length; i++) {

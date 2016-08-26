@@ -1,5 +1,6 @@
 package com.baitu.crashblackbox;
 
+import android.os.Looper;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -62,10 +63,20 @@ public class FileManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ArrayList<CrashTraceInfo> traceInfoList = getCrashTraceInfoSync();
-                if(listener != null){
-                    listener.onSuccess(traceInfoList);
-                }
+                final ArrayList<CrashTraceInfo> traceInfoList = getCrashTraceInfoSync();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+
+                        if(listener != null){
+                            listener.onSuccess(traceInfoList);
+                        }
+
+                        Looper.loop();
+                    }
+                }).start();
+
             }
         }).start();;
     }

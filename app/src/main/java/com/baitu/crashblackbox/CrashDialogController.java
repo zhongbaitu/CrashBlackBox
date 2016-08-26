@@ -43,16 +43,18 @@ public class CrashDialogController implements View.OnClickListener{
         StringBuilder builder = new StringBuilder();
         builder.append("时间：");
         builder.append(info.getTime());
-        builder.append("     ");
+        builder.append("\n");
         builder.append("网络：");
         builder.append(info.getNetwork());
         builder.append("\n");
         builder.append("SD卡是否可写：");
         builder.append(info.isSDCardCanWrite());
-        builder.append("     ");
+        builder.append("\n");
         builder.append("SD卡剩余容量：");
         builder.append(info.getSDCardSize()+"MB");
         builder.append("\n");
+        builder.append("\n");
+        builder.append("---------------");
         builder.append("\n");
         builder.append(info.getCrashInfo());
         mCrashStackTraceTv.setText(builder.toString());
@@ -60,7 +62,6 @@ public class CrashDialogController implements View.OnClickListener{
 
     public void showDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setCancelable(false);
         builder.setView(mParentView);
         builder.show();
     }
