@@ -6,25 +6,27 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 /**
  * Created by baitu on 16/8/25.
  */
-public class CrashBlackBox implements SensorEventListener{
+public class BlackBox implements SensorEventListener{
 
-    private static CrashBlackBox mInstance;
+    private static BlackBox mInstance;
 
     private Context mContext;
     private SensorManager mSensorManager;
     private Vibrator mVibrator;
 
-    public static CrashBlackBox getInstance() {
+    public static BlackBox getInstance() {
         if (mInstance == null) {
-            synchronized (CrashBlackBox.class) {
+            synchronized (BlackBox.class) {
                 if (mInstance == null) {
-                    mInstance = new CrashBlackBox();
+                    mInstance = new BlackBox();
                 }
             }
         }
@@ -45,7 +47,7 @@ public class CrashBlackBox implements SensorEventListener{
     }
 
     public void showMenuDialog(){
-        String items[] = {"查看历史Crash信息", "查看自定义Log信息", "录制小视频"};
+        String items[] = {"查看历史Crash信息", "录制小视频", "查看自定义Log信息"};
         new AlertDialog.Builder(mContext).setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -54,15 +56,19 @@ public class CrashBlackBox implements SensorEventListener{
                         CrashInfoListActivity.start(mContext);
                         break;
                     case 1:
-                        start();
+                        laungthScreenRecorder();
                          break;
                 }
             }
         }).show();
     }
 
-    private void start(){
-//        MediaProjectionManager projectionManager = (MediaProjectionManager) mContext.getSystemService(MEDIA_PROJECTION_SERVICE);
+    private void laungthScreenRecorder(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            RecordActivity.start(mContext);
+        }else{
+            Toast.makeText(mContext, "屏幕录制只支持5.0及以上的机器", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

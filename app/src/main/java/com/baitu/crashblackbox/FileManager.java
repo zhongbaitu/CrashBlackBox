@@ -22,7 +22,7 @@ public class FileManager {
             JSONObject jsonObject = traceInfoList.get(0).getJsonObject();
             jsonArray.put(jsonObject);
         }
-        Utils.saveJsonToFile(jsonArray.toString(), Constant.FILE_CRASH_INFO);
+        BlackBoxUtils.saveJsonToFile(jsonArray.toString(), Constant.FILE_CRASH_INFO);
     }
 
     public static void saveCrashTraceAsync(final CrashTraceInfo crashTraceInfo){
@@ -35,7 +35,7 @@ public class FileManager {
     }
 
     public static ArrayList<CrashTraceInfo> getCrashTraceInfoSync(){
-        String traceInfo = Utils.getJsonFromFile(Constant.FILE_CRASH_INFO);
+        String traceInfo = BlackBoxUtils.getJsonFromFile(Constant.FILE_CRASH_INFO);
         ArrayList<CrashTraceInfo> traceInfoList = null;
         if(!TextUtils.isEmpty(traceInfo)){
             try {

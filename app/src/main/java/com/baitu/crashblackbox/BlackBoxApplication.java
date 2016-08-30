@@ -12,6 +12,6 @@ public class BlackBoxApplication extends Application {
         super.onCreate();
 
 
-        CrashBlackBox.getInstance().init(this);
+        BlackBox.getInstance().init(this);
     }
 }

@@ -18,7 +18,7 @@ import java.util.Locale;
 /**
  * Created by baitu on 16/8/16.
  */
-public class Utils {
+public class BlackBoxUtils {
 
     public static String getSdcardPath() {
         File sdcard = Environment.getExternalStorageDirectory();
@@ -28,8 +28,12 @@ public class Utils {
         return sdcard.getPath();
     }
 
+    public static String getRootPath(){
+        return getSdcardPath() + Constant.PATH_TEST;
+    }
+
     public static String saveImageOoSDCard(Bitmap bmp) {
-        String tempImg = Utils.getSdcardPath() + Constant.PATH_TEST;
+        String tempImg = BlackBoxUtils.getSdcardPath() + Constant.PATH_TEST;
         File dir = new File(tempImg);
         if (dir.exists() == false) {
             dir.mkdirs();
@@ -52,7 +56,7 @@ public class Utils {
     }
 
     public static void saveJsonToFile(String jsonStr, String fileName) {
-        String dir = Utils.getSdcardPath() + Constant.PATH_TEST;
+        String dir = BlackBoxUtils.getSdcardPath() + Constant.PATH_TEST;
         File fDir = new File(dir);
         if (fDir.exists() == false) {
             fDir.mkdirs();
@@ -68,7 +72,7 @@ public class Utils {
     }
 
     public static String getJsonFromFile(String fileName) {
-        String dir = Utils.getSdcardPath() + Constant.PATH_TEST;
+        String dir = BlackBoxUtils.getSdcardPath() + Constant.PATH_TEST;
         File fDir = new File(dir);
         if (fDir.exists() == false) {
             fDir.mkdirs();

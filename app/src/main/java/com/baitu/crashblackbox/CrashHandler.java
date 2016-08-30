@@ -52,9 +52,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         DateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss", Locale.CHINA);
         String time = mDateFormat.format(new Date());
         crashTraceInfo.setTime(time);
-        crashTraceInfo.setNetwork(Utils.getNetworkType(mContext));
-        crashTraceInfo.setSDCardCanWrite(Utils.checkSdWritable());
-        double size = Utils.getSdcardAvaiableSize() / 1024 / 1024;
+        crashTraceInfo.setNetwork(BlackBoxUtils.getNetworkType(mContext));
+        crashTraceInfo.setSDCardCanWrite(BlackBoxUtils.checkSdWritable());
+        double size = BlackBoxUtils.getSdcardAvaiableSize() / 1024 / 1024;
         crashTraceInfo.setSDCardSize(Double.toString(size));
 
         FileManager.saveCrashTraceAsync(crashTraceInfo);

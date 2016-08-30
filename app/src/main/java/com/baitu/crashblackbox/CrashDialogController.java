@@ -85,7 +85,7 @@ public class CrashDialogController implements View.OnClickListener{
         mCrashStackTraceTv.setDrawingCacheEnabled(true);
         mCrashStackTraceTv.buildDrawingCache();
         final Bitmap bitmap = mCrashStackTraceTv.getDrawingCache();
-        Utils.saveImageOoSDCard(bitmap);
+        BlackBoxUtils.saveImageOoSDCard(bitmap);
         Toast.makeText(mContext, "图片已保存到SDCard", Toast.LENGTH_SHORT).show();
     }
 
