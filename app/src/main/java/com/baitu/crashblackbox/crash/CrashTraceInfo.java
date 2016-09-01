@@ -1,4 +1,4 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.crash;
 
 import org.json.JSONException;
 import org.json.JSONObject;

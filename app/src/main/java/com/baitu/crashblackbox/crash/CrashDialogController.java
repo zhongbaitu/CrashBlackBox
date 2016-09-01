@@ -1,4 +1,4 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.crash;
 
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.baitu.crashblackbox.BlackBoxUtils;
+import com.baitu.crashblackbox.R;
 
 /**
  * Created by baitu on 16/8/16.

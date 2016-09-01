@@ -1,4 +1,4 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.crash;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.baitu.crashblackbox.FileManager;
+import com.baitu.crashblackbox.R;
 
 import java.util.ArrayList;
 

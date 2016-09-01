@@ -11,6 +11,10 @@ import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.baitu.crashblackbox.crash.CrashHandler;
+import com.baitu.crashblackbox.crash.CrashInfoListActivity;
+import com.baitu.crashblackbox.recodeScreen.RecordActivity;
+
 /**
  * Created by baitu on 16/8/25.
  */

@@ -28,7 +28,7 @@ public class BlackBoxUtils {
         return sdcard.getPath();
     }
 
-    public static String getRootPath(){
+    public static String getAppPath(){
         return getSdcardPath() + Constant.PATH_TEST;
     }
 

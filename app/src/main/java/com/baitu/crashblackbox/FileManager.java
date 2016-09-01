@@ -3,6 +3,8 @@ package com.baitu.crashblackbox;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.baitu.crashblackbox.crash.CrashTraceInfo;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

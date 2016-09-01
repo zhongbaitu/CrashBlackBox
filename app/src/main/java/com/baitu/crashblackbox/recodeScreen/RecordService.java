@@ -1,4 +1,4 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.recodeScreen;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -18,6 +18,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 
+import com.baitu.crashblackbox.BlackBoxUtils;
+
 import java.io.IOException;
 
 public class RecordService extends Service {
@@ -31,6 +33,8 @@ public class RecordService extends Service {
     private int mHeight;
     private int mDpi;
     private RecorderBroadCast mRecorderBroadCast;
+    private String mFileName;
+    private boolean mConvertGif = false;
 
     public static void StartAndBind(Context context, ServiceConnection serviceConnection){
         Intent intent = new Intent(context, RecordService.class);
@@ -45,11 +49,12 @@ public class RecordService extends Service {
     }
 
     private void init(){
+        mFileName = System.currentTimeMillis() + ".mp4";
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setOutputFile(BlackBoxUtils.getRootPath() + "/test.mp4");
+        mMediaRecorder.setOutputFile(BlackBoxUtils.getAppPath() + mFileName);
         mMediaRecorder.setVideoSize(500, 500);
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
@@ -99,6 +104,10 @@ public class RecordService extends Service {
         mDpi = dpi;
     }
 
+    public void setConvertGif(boolean convertGif) {
+        mConvertGif = convertGif;
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return  new RecordBinder();
@@ -110,8 +119,10 @@ public class RecordService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder
                 .setContentTitle("正在录制：")
+                .setContentInfo("点击停止录制")
+                .setTicker("开始录制屏幕")
+                .setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent)
-                .setOngoing(true)
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
@@ -127,8 +138,13 @@ public class RecordService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             stopRecord();
-//            ScreenRecorderActivity.startInNewTask(context);
+            ScreenRecorderActivity.startInNewTask(context, mFileName, mConvertGif);
+            destory();
         }
+    }
+
+    private void destory(){
+        stopSelf();
     }
 
     public class RecordBinder extends Binder {

@@ -1,7 +1,10 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.crash;
 
 import android.content.Context;
 import android.os.Looper;
+
+import com.baitu.crashblackbox.BlackBoxUtils;
+import com.baitu.crashblackbox.FileManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

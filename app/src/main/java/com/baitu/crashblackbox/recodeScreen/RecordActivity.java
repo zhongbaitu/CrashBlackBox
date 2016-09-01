@@ -1,4 +1,4 @@
-package com.baitu.crashblackbox;
+package com.baitu.crashblackbox.recodeScreen;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -14,12 +14,17 @@ import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import com.baitu.crashblackbox.R;
+
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class RecordActivity extends Activity {
 
     public static final int CODE_RECORDE_REQUEST = 1;
 
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
+
+    private boolean mConvertGif = false;
 
     public static void start(Context context){
         context.startActivity(new Intent(context, RecordActivity.class));
@@ -30,28 +35,27 @@ public class RecordActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder);
 
-        mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-
         init();
     }
 
     private void init(){
+        mMediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+
         findViewById(R.id.btn_mp4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recordeMP4();
+                recordMP4();
             }
         });
 
         findViewById(R.id.btn_gif).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recordeGif();
+                recordGif();
             }
         });
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CODE_RECORDE_REQUEST && resultCode == RESULT_OK) {
@@ -60,14 +64,14 @@ public class RecordActivity extends Activity {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void recordeMP4(){
+    private void recordMP4(){
         Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(captureIntent, CODE_RECORDE_REQUEST);
     }
 
-    private void recordeGif(){
-
+    private void recordGif(){
+        mConvertGif = true;
+        recordMP4();
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -79,6 +83,7 @@ public class RecordActivity extends Activity {
             RecordService recordService = binder.getRecordService();
             recordService.setMediaProjection(mMediaProjection);
             recordService.setConfig(metrics.widthPixels, metrics.heightPixels, metrics.densityDpi);
+            recordService.setConvertGif(mConvertGif);
             recordService.startRecord();
             unbindService(this);
             RecordActivity.this.finish();

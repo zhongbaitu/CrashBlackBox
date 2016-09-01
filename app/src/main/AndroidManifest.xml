@@ -22,20 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".CrashInfoListActivity">
+        <activity android:name=".crash.CrashInfoListActivity">
         </activity>
         <activity
-            android:name=".RecordActivity"
+            android:name=".recodeScreen.RecordActivity"
             android:theme="@style/DialogActivity">
         </activity>
 
         <service
-            android:name=".RecordService"
+            android:name=".recodeScreen.RecordService"
             android:enabled="true"
             android:exported="true">
         </service>
 
-        <activity android:name=".ScreenRecorderActivity">
+        <activity android:name=".recodeScreen.ScreenRecorderActivity">
         </activity>
     </application>
 
