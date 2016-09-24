@@ -6,4 +6,5 @@ package com.baitu.crashblackbox;
 public class Constant {
     public static final String PATH_TEST = "/blackTest/";
     public static final String FILE_CRASH_INFO = "crash.info";
+    public static final String PATH_SCREEN_RECORD = "screenRecord/";
 }

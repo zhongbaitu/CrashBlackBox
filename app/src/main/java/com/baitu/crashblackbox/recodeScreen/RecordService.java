@@ -42,20 +42,14 @@ public class RecordService extends Service {
         context.bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        init();
-    }
-
     private void init(){
-        mFileName = System.currentTimeMillis() + ".mp4";
+        mFileName = BlackBoxUtils.getScreenRecordPath() + System.currentTimeMillis() + ".mp4";
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setOutputFile(BlackBoxUtils.getAppPath() + mFileName);
-        mMediaRecorder.setVideoSize(500, 500);
+        mMediaRecorder.setOutputFile(mFileName);
+        mMediaRecorder.setVideoSize(mWidth, mHeight);
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mMediaRecorder.setVideoEncodingBitRate(5 * 1024 * 1024);
@@ -72,6 +66,7 @@ public class RecordService extends Service {
     }
 
     public void startRecord(){
+        init();
         createVirtualDisplay();
         mMediaRecorder.start();
         showNotification();
@@ -138,7 +133,7 @@ public class RecordService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             stopRecord();
-            ScreenRecorderActivity.startInNewTask(context, mFileName, mConvertGif);
+            PlayRecordActivity.startInNewTask(context, mFileName, mConvertGif);
             destory();
         }
     }

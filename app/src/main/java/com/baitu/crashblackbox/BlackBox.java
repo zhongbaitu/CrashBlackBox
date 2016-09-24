@@ -11,9 +11,9 @@ import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
-import com.baitu.crashblackbox.crash.CrashHandler;
 import com.baitu.crashblackbox.crash.CrashInfoListActivity;
 import com.baitu.crashblackbox.recodeScreen.RecordActivity;
+import com.baitu.crashblackbox.recodeScreen.ScreenRecordListActivity;
 
 /**
  * Created by baitu on 16/8/25.
@@ -39,7 +39,7 @@ public class BlackBox implements SensorEventListener{
 
     public void init(Context context){
         mContext = context;
-        CrashHandler.getInstance().init(mContext);
+//        CrashHandler.getInstance().init(mContext);
         mSensorManager = (SensorManager) context.getSystemService(mContext.SENSOR_SERVICE);
         mVibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
         if (mSensorManager != null) {
@@ -51,7 +51,7 @@ public class BlackBox implements SensorEventListener{
     }
 
     public void showMenuDialog(){
-        String items[] = {"查看历史Crash信息", "录制小视频", "查看自定义Log信息"};
+        String items[] = {"查看历史Crash信息", "录制小视频", "查看屏幕录制", "查看自定义Log信息"};
         new AlertDialog.Builder(mContext).setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -62,6 +62,9 @@ public class BlackBox implements SensorEventListener{
                     case 1:
                         laungthScreenRecorder();
                          break;
+                    case 2:
+                        ScreenRecordListActivity.start(mContext);
+                        break;
                 }
             }
         }).show();
@@ -82,7 +85,8 @@ public class BlackBox implements SensorEventListener{
         if (sensorType == Sensor.TYPE_ACCELEROMETER) {
             if ((Math.abs(values[0]) > 19 || Math.abs(values[1]) > 19 || Math.abs(values[2]) > 19)) {
                 mVibrator.vibrate(500);
-                showMenuDialog();
+//                showMenuDialog();
+                ShakeDialogActivity.start(mContext);
             }
         }
     }

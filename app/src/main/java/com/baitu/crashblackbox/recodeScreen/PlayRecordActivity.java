@@ -17,22 +17,30 @@ import java.io.File;
 
 import cn.dxjia.ffmpeg.library.FFmpegNativeHelper;
 
-public class ScreenRecorderActivity extends AppCompatActivity {
+public class PlayRecordActivity extends AppCompatActivity {
 
     public static final String KEY_IS_CONVERT_GIF = "is_convert_gif";
     public static final String KEY_FILE_NAME = "file_name";
+    public static final String KEY_PLAY_FILE = "play_file";
 
     private VideoView mVideoView;
     private GifPlayView mGifPlayView;
     private ProgressDialog mProgressDialog;
+    private File mTargetFile;
 
     private boolean mConvertGif = false;
 
     public static final void startInNewTask(Context context, String fileName, boolean isConvertGif){
-        Intent intent = new Intent(context, ScreenRecorderActivity.class);
+        Intent intent = new Intent(context, PlayRecordActivity.class);
         intent.putExtra(KEY_IS_CONVERT_GIF, isConvertGif);
         intent.putExtra(KEY_FILE_NAME, fileName);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void play(Context context, String file){
+        Intent intent = new Intent(context, PlayRecordActivity.class);
+        intent.putExtra(KEY_PLAY_FILE, file);
         context.startActivity(intent);
     }
 
@@ -50,33 +58,49 @@ public class ScreenRecorderActivity extends AppCompatActivity {
         mVideoView = (VideoView) findViewById(R.id.videoView);
         mVideoView.setMediaController(new MediaController(this));
         mGifPlayView = (GifPlayView) findViewById(R.id.gif_view);
-        mGifPlayView.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.play_layout).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                mGifPlayView.rePlay();
+            public boolean onLongClick(View v) {
+                BlackBoxUtils.sendFile(PlayRecordActivity.this, mTargetFile);
+                return true;
             }
         });
     }
 
     private void processIntent(){
         Intent intent = getIntent();
-        mConvertGif = intent.getBooleanExtra(KEY_IS_CONVERT_GIF, false);
-        String fileName = intent.getStringExtra(KEY_FILE_NAME);
-        if(!TextUtils.isEmpty(fileName)){
-            File mp4File = new File(BlackBoxUtils.getAppPath() + fileName);
-            if(mConvertGif){
-                showConvertToGifLoadingDialog();
-                convertMp4ToGif(mp4File);
+        if(intent.hasExtra(KEY_PLAY_FILE)){
+            String file = intent.getStringExtra(KEY_PLAY_FILE);
+            mTargetFile = new File(file);
+            if(file.endsWith("mp4")){
+                playVideo(file);
             }else{
-                showThumb(mp4File);
+                playGif(file);
+            }
+        }else{
+            mConvertGif = intent.getBooleanExtra(KEY_IS_CONVERT_GIF, false);
+            String fileName = intent.getStringExtra(KEY_FILE_NAME);
+            if(!TextUtils.isEmpty(fileName)){
+                File mp4File = new File(fileName);
+                if(mConvertGif){
+                    showConvertToGifLoadingDialog();
+                    convertMp4ToGif(mp4File);
+                }else{
+                    playVideo(mp4File.getAbsolutePath());
+                    mTargetFile = mp4File;
+                }
             }
         }
     }
 
-    private void showThumb(File mp4File){
-        mVideoView.setVideoPath(mp4File.getAbsolutePath());
+    private void playVideo(String mp4FileStr){
+        mVideoView.setVideoPath(mp4FileStr);
         mVideoView.start();
         mVideoView.requestFocus();
+    }
+
+    public void playGif(String fileStr){
+        mGifPlayView.play(fileStr);
     }
 
     private void convertMp4ToGif(final File mp4File){
@@ -84,7 +108,7 @@ public class ScreenRecorderActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String gifFileName = System.currentTimeMillis() + ".gif";
-                File gifFile = new File(BlackBoxUtils.getAppPath() + gifFileName);
+                File gifFile = new File(BlackBoxUtils.getScreenRecordPath() + gifFileName);
                 if(mp4File.exists()){
                     StringBuilder commandBuilder = new StringBuilder();
                     commandBuilder.append("ffmpeg -i ");
@@ -93,7 +117,6 @@ public class ScreenRecorderActivity extends AppCompatActivity {
                     commandBuilder.append(gifFile.getAbsolutePath());
                     String command = commandBuilder.toString();
                     FFmpegNativeHelper.runCommand(command);
-
 
                     convertDone(gifFile, mp4File);
                 }
@@ -107,7 +130,8 @@ public class ScreenRecorderActivity extends AppCompatActivity {
             public void run() {
                 deleteMp4File(deleteFile);
                 mProgressDialog.dismiss();
-                mGifPlayView.play(gifFile.getAbsolutePath());
+                playGif(gifFile.getAbsolutePath());
+                mTargetFile = gifFile;
             }
         });
     }

@@ -1,9 +1,11 @@
 package com.baitu.crashblackbox;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
 
@@ -30,6 +32,15 @@ public class BlackBoxUtils {
 
     public static String getAppPath(){
         return getSdcardPath() + Constant.PATH_TEST;
+    }
+
+    public static String getScreenRecordPath(){
+        String path = getAppPath() + Constant.PATH_SCREEN_RECORD;
+        File file = new File(path);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        return path;
     }
 
     public static String saveImageOoSDCard(Bitmap bmp) {
@@ -170,6 +181,16 @@ public class BlackBoxUtils {
             return availableBlocks * blockSize;
         } else {
             return 0;
+        }
+    }
+
+    public static void sendFile(Context context, File file){
+        if(file != null && file.exists()){
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+            shareIntent.setType("*/*");
+            context.startActivity(Intent.createChooser(shareIntent, "请选择"));
         }
     }
 }

@@ -11,6 +11,7 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -35,7 +36,13 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".recodeScreen.ScreenRecorderActivity">
+        <activity android:name=".recodeScreen.PlayRecordActivity">
+        </activity>
+        <activity
+            android:name=".ShakeDialogActivity"
+            android:theme="@style/DialogActivity">
+        </activity>
+        <activity android:name=".recodeScreen.ScreenRecordListActivity">
         </activity>
     </application>
 
